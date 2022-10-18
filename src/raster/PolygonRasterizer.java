@@ -9,17 +9,24 @@ public class PolygonRasterizer {
     public PolygonRasterizer(LineRasterizer lineRasterizer){
         this.lineRasterizer = lineRasterizer;
     }
-    public void rasterize(Polygon polygon){
-        if (polygon.getCount() != 4){
-            return;
+    public void rasterize(Polygon polygon, int color, boolean use_dashed){
+        for (int i = 0; i < polygon.getCount(); i++) {
+            if (i == polygon.getCount() - 1) {
+                lineRasterizer.rasterize(new Line(
+                                polygon.getPoint(i).getX(),
+                                polygon.getPoint(i).getY(),
+                                polygon.getPoint(0).getX(),
+                                polygon.getPoint(0).getY()),
+                                color, use_dashed);
+
+            } else {
+                lineRasterizer.rasterize(new Line(
+                                polygon.getPoint(i).getX(),
+                                polygon.getPoint(i).getY(),
+                                polygon.getPoint(i + 1).getX(),
+                                polygon.getPoint(i + 1).getY()),
+                                color, use_dashed);
+            }
         }
-        Point point1 = polygon.getPoint(0);
-        Point point2 = polygon.getPoint(1);
-        Point point3 = polygon.getPoint(2);
-        Point point4 = polygon.getPoint(3);
-        lineRasterizer.rasterize(new Line(point1.getX(), point1.getY(), point2.getX(), point2.getY()), 0xffffff, false);
-        lineRasterizer.rasterize(new Line(point2.getX(), point2.getY(), point3.getX(), point3.getY()), 0xffffff, false);
-        lineRasterizer.rasterize(new Line(point3.getX(), point3.getY(), point4.getX(), point4.getY()), 0xffffff, false);
-        lineRasterizer.rasterize(new Line(point4.getX(), point4.getY(), point1.getX(), point1.getY()), 0xffffff, false);
     }
 }

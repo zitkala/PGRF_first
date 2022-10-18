@@ -14,8 +14,8 @@ public class TrivialLineRasterizer extends LineRasterizer{
         float k;
         float q;
         if ((x2 - x1) == 0){
-            k = -1;
-            q = y1;// - x1;
+            k = 0;
+            q = y1;
         }else {
             k = (float)(y2 - y1)/ (float)(x2 - x1);
             q = y1 - k * x1;
@@ -30,7 +30,7 @@ public class TrivialLineRasterizer extends LineRasterizer{
                 else{ setPixelsCalculationX(x1, x2, k, q, color); }
             } else {
                 if (is_dashed){ setDashedPixelsCalculationX(x2, x1, k, q, color, spacing_offset); }
-                setPixelsCalculationX(x2, x1, k, q, color);
+                else { setPixelsCalculationX(x2, x1, k, q, color); }
             }
         } else {
             int spacing_offset = abs_y / granularity;
@@ -63,11 +63,14 @@ public class TrivialLineRasterizer extends LineRasterizer{
         }
     }
     private void setDashedPixelsCalculationX(int x1, int x2, float k, float q, int color, int spacing_offset){
-        for (int idx_x = x1; idx_x <= x2; idx_x += (spacing_offset*2)) {
+        for (int idx_x = x1; idx_x <= x2; idx_x += (spacing_offset * 2)) {
             int temp_idx_limit;
             if (idx_x + spacing_offset > x2){ temp_idx_limit = x2; }
             else { temp_idx_limit = idx_x + spacing_offset; }
+
             for (int idx_temp_x = idx_x;  idx_temp_x < temp_idx_limit; idx_temp_x++){
+                //System.out.println("idx x: " + idx_x);
+                //System.out.println("limit x: " + temp_idx_limit);
                 int temp_y = (int) (k * idx_temp_x + q);
                 raster.setPixel(idx_temp_x, temp_y, color);
             }
@@ -75,13 +78,13 @@ public class TrivialLineRasterizer extends LineRasterizer{
     }
 
     private void setDashedPixelCalculationY(int x, int y1, int y2, float k, float q, int color, int spacing_offset){
-        for (int idx_y = y1; idx_y <= y2; idx_y += (spacing_offset*2)) {
+        for (int idx_y = y1; idx_y <= y2; idx_y += (spacing_offset * 2)) {
             int temp_x;
             int temp_idx_limit;
             if (idx_y + spacing_offset > y2){ temp_idx_limit = y2; }
             else { temp_idx_limit = idx_y + spacing_offset; }
             for (int idx_temp_y = idx_y; idx_temp_y < temp_idx_limit; idx_temp_y++){
-                if (k == -1){
+                if (k == 0){
                     temp_x = x;
                 }else {
                     temp_x = (int) ((idx_temp_y - q)/k);
