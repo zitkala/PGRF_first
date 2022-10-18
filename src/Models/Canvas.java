@@ -81,7 +81,7 @@ public class Canvas {
             public void mouseDragged(MouseEvent e) {
                 //System.out.println("x: " + start.getX() + "y: " + start.getY());
                 ((RasterBufferedImage)raster).clear();
-                lineRasterizer.rasterize(new Line(start.getX(), start.getY(), e.getX(), e.getY()), 0x00ff00);
+                lineRasterizer.rasterize(new Line(start.getX(), start.getY(), e.getX(), e.getY()), 0x00ff00, false);
                 panel.repaint();
             }
         });
