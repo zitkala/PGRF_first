@@ -115,9 +115,9 @@ public class Canvas {
             public void mouseDragged(MouseEvent e) {
                 //System.out.println("x: " + start.getX() + "y: " + start.getY());
                 end = new Point(e.getX(), e.getY());
+                ((RasterBufferedImage) raster).clear();
                 switch (mode) {
                     case (0):
-                        ((RasterBufferedImage) raster).clear();
                         if (polygon.getCount() < 1) {
                             lineRasterizer.rasterize(new Line(start.getX(), start.getY(), end.getX(), end.getY()), 0x00ff00, true);
                         } else {
@@ -126,7 +126,6 @@ public class Canvas {
                             lineRasterizer.rasterize(new Line(polygon.getFirstPoint(), end), 0x00ff00, true);
 
                         }
-                        panel.repaint();
                         break;
                     case (1):
                         switch (triangle.getCount()){
@@ -141,8 +140,8 @@ public class Canvas {
                                 polygonRasterizer.rasterize(triangle.getPolygon(),0x00ff00, false);
                         }
                         break;
-
                 }
+                panel.repaint();
             }
         });
 

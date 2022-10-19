@@ -3,7 +3,7 @@ package Models;
 import static java.lang.Math.abs;
 
 public class IsoscelesTriangle {
-    private Polygon triangle;
+    private final Polygon triangle;
     public IsoscelesTriangle(){
         triangle = new Polygon();
     }
@@ -49,27 +49,32 @@ public class IsoscelesTriangle {
             if ((x2 - x1) == 0){
                 base = new Function(0, y1);
             }else {
-                float temp_k = (float)(y2 - y1)/ (float)(x2 - x1);
+                float temp_k = ((float)(y2 - y1)/(float)(x2 - x1));
                 base = new Function(temp_k, y1 - temp_k * x1);
             }
             float temp_distance_x = abs(x1 - x2);
             float temp_distance_y = abs(y1 - y2);
             float midpoint_x;
             if (x1 < x2){
-                midpoint_x = (float)x1 + (float)temp_distance_x/2;
+                midpoint_x = (float)x1 + temp_distance_x/2.f;
             }else {
-                midpoint_x = (float)x2 + (float)temp_distance_x/2;
+                midpoint_x = (float)x2 + temp_distance_x/2.f;
             }
             float midpoint_y;
             if (y1 < y2){
-                midpoint_y = (float)y1 + (float)temp_distance_y/2;
+                midpoint_y = (float)y1 + temp_distance_y/2.f;
             }else {
-                midpoint_y = (float)y2 + (float)temp_distance_y/2;
+                midpoint_y = (float)y2 + temp_distance_y/2.f;
             }
             Function parallel = new Function(base.getK(), mouse_point.getY() - base.getK() * mouse_point.getX());
-            Function perpendicular =
+            //midpoint_y = 1/(-base.getK())*midpointx + q
+            //q = midpoint_y - 1/(-base.getK())*midpoint_x
+            float ppdc_q = midpoint_y - ((1/(-base.getK())) * midpoint_x);
+            Function perpendicular = new Function(1/(-base.getK()), ppdc_q);
 
-
+            if (triangle.getCount() == 3){
+                editPoint(2, parallel.getIntersection(perpendicular));
+            } else { triangle.addPoint(parallel.getIntersection(perpendicular)); }
             //TODO top point calculation
         }
 
