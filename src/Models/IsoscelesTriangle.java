@@ -2,26 +2,26 @@ package Models;
 
 import static java.lang.Math.abs;
 
-public class IsoscelesTriangle extends Polygon{
+public class IsoscelesTriangle extends Polygon{//inherits from polygon
 
     public IsoscelesTriangle(){
     }
     @Override
-    public void addPoint(Point point){
+    public void addPoint(Point point){ //decides what happens with new point
         switch (getCount()) {
             case (0), (1) -> addBasePoint(point);
             default -> addTopPoint(point);
         }
     }
 
-    private void addBasePoint(Point point){
+    private void addBasePoint(Point point){//base is made from first two Points
         if (getCount() < 3){
             super.addPoint(point);
         }else{
             System.out.println("Trying to add point to already existing base");
         }
     }
-    private void addTopPoint(Point mouse_point){
+    private void addTopPoint(Point mouse_point){//calculates top point to make isosceles triangle
         if (getCount() < 2) {
             System.out.println("Base not made yet");
         } else if (getCount() > 3) {
@@ -51,10 +51,10 @@ public class IsoscelesTriangle extends Polygon{
 
             float base_k;
 
-            if ((temp_distance_x) == 0) {
+            if ((temp_distance_x) == 0) {//handles situation where both base points have same x value
                 decideAdd(new Point(mouse_point.getX(), (int) midpoint_y));
                 return;
-            } else if (temp_distance_y == 0) {
+            } else if (temp_distance_y == 0) {//handles situation where both base points have same y value
                 decideAdd(new Point((int)midpoint_x, mouse_point.getY()));
                 return;
 
@@ -69,7 +69,7 @@ public class IsoscelesTriangle extends Polygon{
         }
 
     }
-    private void decideAdd(Point point_to_add) {
+    private void decideAdd(Point point_to_add) {//decides whether to add Point or edit top Point
         if (getCount() == 3){
             setPointAt(2, point_to_add);
         } else { super.addPoint(point_to_add); }
