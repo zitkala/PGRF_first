@@ -27,13 +27,10 @@ public class Canvas {
         frame.setTitle("PGRF");
         frame.setResizable(false);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        //x = width/2;
-        //y = height/2;
         raster = new RasterBufferedImage(width, height);
         lineRasterizer = new TrivialLineRasterizer(raster);
         polygonRasterizer = new PolygonRasterizer(lineRasterizer);
 
-        //raster.setPixel(x, y, 0xffffff);
         panel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -66,6 +63,8 @@ public class Canvas {
                     case KeyEvent.VK_C:
                         System.out.println("Clearing");
                         ((RasterBufferedImage)raster).clear();
+                        polygon = new Polygon();
+                        triangle = new IsoscelesTriangle();
                         panel.repaint();
                         break;
                 }
@@ -92,18 +91,24 @@ public class Canvas {
                 System.out.println("ms released");
                 ((RasterBufferedImage) raster).clear();
                 switch (mode) {
-                    case (0):
-                        if (start != null) { polygon.addPoint(start); }
+                    case (0) -> {
+                        if (start != null) {
+                            polygon.addPoint(start);
+                        }
                         if (end != null) {
                             polygon.addPoint(end);
                             polygonRasterizer.rasterize(polygon, 0x00ff00, false);
                         }
-                        break;
-                    case (1):
-                        if (start != null) { triangle.addPoint(start); }
-                        if (end != null) { triangle.addPoint(end); }
-                        polygonRasterizer.rasterize(triangle.getPolygon(), 0x00ff00, false);
-                        break;
+                    }
+                    case (1) -> {
+                        if (start != null) {
+                            triangle.addPoint(start);
+                        }
+                        if (end != null) {
+                            triangle.addPoint(end);
+                        }
+                        polygonRasterizer.rasterize(triangle, 0x00ff00, false);
+                    }
                 }
                 start = null;
                 end = null;
@@ -113,9 +118,9 @@ public class Canvas {
         panel.addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
-                //System.out.println("x: " + start.getX() + "y: " + start.getY());
                 end = new Point(e.getX(), e.getY());
                 ((RasterBufferedImage) raster).clear();
+                fixRange(end, width, height);
                 switch (mode) {
                     case (0):
                         if (polygon.getCount() < 1) {
@@ -124,20 +129,16 @@ public class Canvas {
                             polygonRasterizer.rasterize(polygon, 0x00ff00, false);
                             lineRasterizer.rasterize(new Line(polygon.getLastPoint(), end),0x00ff00, true);
                             lineRasterizer.rasterize(new Line(polygon.getFirstPoint(), end), 0x00ff00, true);
-
                         }
                         break;
                     case (1):
-                        switch (triangle.getCount()){
-                            case(0):
-                                lineRasterizer.rasterize(new Line(start, end), 0x00ff00, true);
-                                break;
-                            case(1):
-                                lineRasterizer.rasterize(new Line(triangle.getLastPoint(), end),0x00ff00, true);
-                                break;
-                            default:
+                        switch (triangle.getCount()) {
+                            case (0) -> lineRasterizer.rasterize(new Line(start, end), 0x00ff00, true);
+                            case (1) -> lineRasterizer.rasterize(new Line(triangle.getLastPoint(), end), 0x00ff00, true);
+                            default -> {
                                 triangle.addPoint(end);
-                                polygonRasterizer.rasterize(triangle.getPolygon(),0x00ff00, false);
+                                polygonRasterizer.rasterize(triangle, 0x00ff00, false);
+                            }
                         }
                         break;
                 }
@@ -148,6 +149,10 @@ public class Canvas {
 
 
     }
+    private void fixRange(Point point_to_check, int width, int height){
+        if(point_to_check.getX() < 0) { point_to_check.setX(0); }
+        if(point_to_check.getX() >= width) { point_to_check.setX(width - 1); }
+        if(point_to_check.getY() < 0) { point_to_check.setY(0); }
+        if(point_to_check.getY() >= height) { point_to_check.setY(height -1 ); }
+    }
 }
-//TODO rovnoramm. trojuh. y = kx + q   // k2=1/k1
-//TODO k3 = k1

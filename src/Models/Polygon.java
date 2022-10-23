@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Polygon {
-    private List<Point> points;
+    protected List<Point> points;
     public Polygon(){
         this.points  = new ArrayList<>();
     }
